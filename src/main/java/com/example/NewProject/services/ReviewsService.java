@@ -1,6 +1,8 @@
 package com.example.NewProject.services;
 
+import com.example.NewProject.entities.Products;
 import com.example.NewProject.entities.Reviews;
+import com.example.NewProject.entities.Users;
 import com.example.NewProject.repos.ReviewsRepo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +23,14 @@ public class ReviewsService {
 
     public int getCountOfReviewsOnProduct(long productId){
 
-        return reviewsRepo.findByProductId(productId).size();
+        return reviewsRepo.findByPrdId(productId).size();
 
     }
 
     public List<String> getListOfMiddleStarsOnProduct(long productId){
 
         List<String> result = new ArrayList<>();
-        List<Reviews> reviewsOnProduct = reviewsRepo.findByProductId(productId);
+        List<Reviews> reviewsOnProduct = reviewsRepo.findByPrdId(productId);
 
         if (reviewsOnProduct.size() > 0){
             int summStars = reviewsOnProduct.stream().mapToInt(Reviews::getStars).sum();
@@ -70,7 +72,7 @@ public class ReviewsService {
 
         ReviewsShowFormat reviewsShowFormat = new ReviewsShowFormat();
         reviewsShowFormat.setId(review.getId());
-        reviewsShowFormat.setUserName(usersService.findNameById(review.getUserId()));
+        reviewsShowFormat.setUserName(usersService.findNameById(review.getUser().getId()));
         reviewsShowFormat.setStars(listStars);
         reviewsShowFormat.setReviewText(review.getReviewText());
         return reviewsShowFormat;
@@ -79,7 +81,7 @@ public class ReviewsService {
     public List<Object> getProductReviews(long productId){
 
         List<Object> listToReturn = new ArrayList<>();
-        List<Reviews> reviews = reviewsRepo.findByProductId(productId);
+        List<Reviews> reviews = reviewsRepo.findByPrdId(productId);
 
         if (reviews.size() > 5){
 
@@ -99,7 +101,7 @@ public class ReviewsService {
     public List<Object> findAllReviewsOnProduct(long productId){
 
         List<Object> result = new ArrayList<>();
-        List<Reviews> reviews = reviewsRepo.findByProductId(productId);
+        List<Reviews> reviews = reviewsRepo.findByPrdId(productId);
         reviews.forEach(r -> result.add(convertReviewsToShowFormat(r)));
         return result;
     }
@@ -115,11 +117,11 @@ public class ReviewsService {
         }
     }
 
-    public void addNewReview(long userId, long productId, int stars, String comment){
+    public void addNewReview(Users user, Products product, int stars, String comment){
 
         Reviews review = new Reviews();
-        review.setUserId(userId);
-        review.setProductId(productId);
+        review.setUser(user);
+        review.setProduct(product);
         review.setStars(stars);
         review.setReviewText(comment);
         reviewsRepo.save(review);

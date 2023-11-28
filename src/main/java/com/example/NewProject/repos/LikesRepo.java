@@ -11,10 +11,11 @@ import java.util.List;
 @Repository
 public interface LikesRepo extends JpaRepository<Likes, Long> {
 
-    @Query("SELECT l FROM Likes l WHERE l.userId = :usId AND l.productId = :prdId")
+    @Query("SELECT l FROM Likes l WHERE l.user.id = :usId AND l.product.id = :prdId")
     List<Likes> checkLikedByUser(@Param("usId") long userId, @Param("prdId") long productId);
 
-    List<Likes> findByUserId(long userId);
+    @Query("SELECT l FROM Likes l WHERE l.user.id = :usId")
+    List<Likes> findByUsId(@Param("usId") long userId);
 
     @Query("SELECT l FROM Likes l WHERE l.id = :lkId")
     Likes findByLikeId(@Param("lkId") long likeId);

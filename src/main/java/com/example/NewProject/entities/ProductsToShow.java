@@ -1,5 +1,6 @@
 package com.example.NewProject.entities;
 
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 @Getter
 @Setter
 public class ProductsToShow implements Serializable{

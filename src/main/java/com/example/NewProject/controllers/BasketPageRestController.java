@@ -98,10 +98,10 @@ public class BasketPageRestController {
             }
             else{
                 Users user = usersService.findUserByPrincipal(principal);
-                Orders order = ordersService.makeOrder(user.getId(), address, costOfOrder, fio, phone);
+                Orders order = ordersService.makeOrder(user, address, costOfOrder, fio, phone);
                 basketsToOrder.forEach(bto -> {
-                    productInOrderService.addProductToOrder(order.getId(), bto.getProductOnStockId(), bto.getCount());
-                    productOnStockService.minusProductsFromStock(bto.getProductOnStockId(), bto.getCount());
+                    productInOrderService.addProductToOrder(order, bto.getProductsOnStock(), bto.getCount());
+                    productOnStockService.minusProductsFromStock(bto.getProductsOnStock().getId(), bto.getCount());
                     basketService.deleteFromBasket(bto.getId());
                 });
                 result.add("Заказ оформлен! Проверяйте его статус в профиле и на почте!");
@@ -147,7 +147,7 @@ public class BasketPageRestController {
 
             BasketShort basketShort = new BasketShort();
             basketShort.setIndex(baskets.indexOf(b));
-            basketShort.setProductOnStockId(b.getProductOnStockId());
+            basketShort.setProductOnStockId(b.getProductsOnStock().getId());
             basketShort.setCount(b.getCount());
             basketsShort.add(basketShort);
         });

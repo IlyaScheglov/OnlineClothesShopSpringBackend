@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,14 +19,8 @@ public class Orders implements Serializable{
     @Column(name = "id")
     private long id;
 
-    @Column(name = "user_id")
-    private long userId;
-
     @Column(name = "address")
     private String address;
-
-    @Column(name = "status_id")
-    private long statusId;
 
     @Column(name = "cost")
     private String cost;
@@ -37,4 +33,15 @@ public class Orders implements Serializable{
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private Users user;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
+    private List<ProductsInOrder> orders = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id")
+    private Statuses status;
 }

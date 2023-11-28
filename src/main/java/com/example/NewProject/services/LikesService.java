@@ -2,6 +2,7 @@ package com.example.NewProject.services;
 
 import com.example.NewProject.entities.Likes;
 import com.example.NewProject.entities.Products;
+import com.example.NewProject.entities.Users;
 import com.example.NewProject.repos.LikesRepo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,11 @@ public class LikesService {
 
     private final ImagesService imagesService;
 
-    public void addLike(long userId, long productId){
+    public void addLike(Users user, Products product){
 
         Likes like = new Likes();
-        like.setUserId(userId);
-        like.setProductId(productId);
+        like.setUser(user);
+        like.setProduct(product);
         likesRepo.save(like);
 
     }
@@ -49,7 +50,7 @@ public class LikesService {
 
     public List<Object> getAllLikes(long userId){
 
-        List<Likes> likes = likesRepo.findByUserId(userId);
+        List<Likes> likes = likesRepo.findByUsId(userId);
         return convertLikesToShowFormat(likes);
     }
 
@@ -72,11 +73,11 @@ public class LikesService {
 
         List<Object> likesShowFormat = new ArrayList<>();
         likes.forEach(l -> {
-            Products product = productsService.findProductById(l.getProductId());
+            Products product = l.getProduct();
             LikesShowFormat likeNewFormat = new LikesShowFormat();
             likeNewFormat.setId(l.getId());
-            likeNewFormat.setProductId(l.getProductId());
-            likeNewFormat.setImage(imagesService.getAllImagesOnProduct(l.getProductId()).get(0));
+            likeNewFormat.setProductId(l.getProduct().getId());
+            likeNewFormat.setImage(imagesService.getFirstImageOfProduct(l.getProduct().getId()));
             likeNewFormat.setTitle(product.getTitle());
             likeNewFormat.setCost(product.getCost());
             likesShowFormat.add(likeNewFormat);

@@ -27,12 +27,6 @@ public class MainPagesController {
 
     @GetMapping("/")
     private String mainPage(Model model){
-
-        List<Products> productsOnStock = productsService.findProductsOnStock();
-        List<Products> bestSellers = productsService.findBestSellers();
-
-        model.addAttribute("productsOnStock", productsService.convertListProductsToShowFormat(productsOnStock));
-        model.addAttribute("bestSellers", productsService.convertListProductsToShowFormat(bestSellers));
         return "home_page";
     }
 

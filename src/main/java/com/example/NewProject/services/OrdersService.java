@@ -1,6 +1,7 @@
 package com.example.NewProject.services;
 
 import com.example.NewProject.entities.Orders;
+import com.example.NewProject.entities.Users;
 import com.example.NewProject.repos.OrdersRepo;
 import jakarta.persistence.criteria.Order;
 import lombok.Getter;
@@ -29,12 +30,12 @@ public class OrdersService {
 
     public List<Long> findOrdersIdsByUserId(long userId){
 
-        List<Orders> orders = ordersRepo.findByUserId(userId);
+        List<Orders> orders = ordersRepo.findByUsId(userId);
         List<Long> ordersId = orders.stream().map(o -> o.getId()).collect(Collectors.toList());
         return ordersId;
     }
 
-    public Orders makeOrder(long userId, String address, String cost, String fio, String phone){
+    public Orders makeOrder(Users user, String address, String cost, String fio, String phone){
 
         String finalFio, finalPhone;
         if (fio.length() > 100){
@@ -51,9 +52,9 @@ public class OrdersService {
         }
 
         Orders order = new Orders();
-        order.setUserId(userId);
+        order.setUser(user);
         order.setAddress(address);
-        order.setStatusId(1L);
+        order.setStatus(statusesService.getStatusById(1L));
         order.setCost(cost);
         order.setFio(finalFio);
         order.setPhoneNumber(finalPhone);
@@ -68,7 +69,7 @@ public class OrdersService {
 
     public List<Object> getUserOrders(long userId){
 
-        List<Orders> orders = ordersRepo.findByUserId(userId);
+        List<Orders> orders = ordersRepo.findByUsId(userId);
         Collections.reverse(orders);
         return convertOrdersToShowFormat(orders);
     }
@@ -101,11 +102,11 @@ public class OrdersService {
 
             OrdersShowFormat ordersShowFormat = new OrdersShowFormat();
             ordersShowFormat.setId(o.getId());
-            ordersShowFormat.setImage(imagesService.getAllImagesOnProduct(productId).get(0));
+            ordersShowFormat.setImage(imagesService.getFirstImageOfProduct(productId));
             ordersShowFormat.setAddress(o.getAddress());
             ordersShowFormat.setFinalAddress(o.getFinalAddress());
             ordersShowFormat.setCost(o.getCost());
-            ordersShowFormat.setStatus(statusesService.getStatusById(o.getStatusId()));
+            ordersShowFormat.setStatus(o.getStatus().getTitle());
             ordersShowFormat.setCount(productInOrderService.getCountOfProductsInOrder(o.getId()));
             result.add(ordersShowFormat);
         });
@@ -120,13 +121,13 @@ public class OrdersService {
     public void changeOrderStatus(long orderId, String address){
 
         Orders order = ordersRepo.findByOrderId(orderId);
-        if(order.getStatusId() == 1L){
+        if(order.getStatus().getId() == 1L){
             order.setFinalAddress(address);
-            order.setStatusId(2L);
+            order.setStatus(statusesService.getStatusById(2L));
             ordersRepo.save(order);
         }
-        else if(order.getStatusId() == 2L){
-            order.setStatusId(3L);
+        else if(order.getStatus().getId() == 2L){
+            order.setStatus(statusesService.getStatusById(3L));
             ordersRepo.save(order);
         }
     }

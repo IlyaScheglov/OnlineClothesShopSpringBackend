@@ -3,6 +3,7 @@ package com.example.NewProject.services;
 import com.example.NewProject.entities.Basket;
 import com.example.NewProject.entities.Products;
 import com.example.NewProject.entities.ProductsOnStock;
+import com.example.NewProject.entities.Users;
 import com.example.NewProject.repos.BasketRepo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,10 @@ public class BasketService {
 
     private final ImagesService imagesService;
 
-    public void addProductToTheBasket(long userId, long productId, int count){
+    public void addProductToTheBasket(Users user, ProductsOnStock product, int count){
         Basket basket = new Basket();
-        basket.setUserId(userId);
-        basket.setProductOnStockId(productId);
+        basket.setUser(user);
+        basket.setProductsOnStock(product);
         basket.setCount(count);
         basketRepo.save(basket);
     }
@@ -62,20 +63,19 @@ public class BasketService {
 
     private boolean checkBasketProductOnStock(Basket basket){
 
-        return basket.getCount() <= productOnStockService
-                .findProductOnStockById(basket.getProductOnStockId()).getCount();
+        return basket.getCount() <= basket.getProductsOnStock().getCount();
     }
 
     private BasketProductShowFormat convertBasketToShowFormat(Basket basket){
 
-        ProductsOnStock productsOnStock = productOnStockService.findProductOnStockById(basket.getProductOnStockId());
-        Products product = productsService.findProductById(productsOnStock.getProductId());
+        ProductsOnStock productsOnStock = basket.getProductsOnStock();
+        Products product = productsOnStock.getProduct();
         BigDecimal costOfOneProduct = new BigDecimal(product.getCost());
         BigDecimal finalSumm = costOfOneProduct.multiply(BigDecimal.valueOf(basket.getCount())).setScale(2, RoundingMode.HALF_UP);
 
         BasketProductShowFormat basketToReturn = new BasketProductShowFormat();
         basketToReturn.setId(basket.getId());
-        basketToReturn.setImage(imagesService.getAllImagesOnProduct(product.getId()).get(0));
+        basketToReturn.setImage(imagesService.getFirstImageOfProduct(product.getId()));
         basketToReturn.setTitle(product.getTitle());
         basketToReturn.setCount(basket.getCount());
         basketToReturn.setSize(productsOnStock.getSize());
@@ -89,7 +89,7 @@ public class BasketService {
     public List<Object> findUserBasketProducts(long userId){
 
         List<Object> listToReturn = new ArrayList<>();
-        List<Basket> usersBasket = basketRepo.findByUserId(userId);
+        List<Basket> usersBasket = basketRepo.findByUsId(userId);
         List<BasketProductShowFormat> basketProductShowFormat = usersBasket
                 .stream()
                 .map(ub -> convertBasketToShowFormat(ub))

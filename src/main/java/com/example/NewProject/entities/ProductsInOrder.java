@@ -17,12 +17,14 @@ public class ProductsInOrder implements Serializable{
     @Column(name = "id")
     private long id;
 
-    @Column(name = "order_id")
-    private long orderId;
-
-    @Column(name = "product_in_stock_id")
-    private long productOnStockId;
-
     @Column(name = "count")
     private int count;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_in_stock_id")
+    private ProductsOnStock productsOnStock;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
+    private Orders order;
 }

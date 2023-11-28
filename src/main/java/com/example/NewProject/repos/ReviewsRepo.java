@@ -1,5 +1,6 @@
 package com.example.NewProject.repos;
 
+import com.example.NewProject.entities.ProductsInOrder;
 import com.example.NewProject.entities.Reviews;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,9 +12,10 @@ import java.util.List;
 @Repository
 public interface ReviewsRepo extends JpaRepository<Reviews, Long> {
 
-    List<Reviews> findByProductId(long productId);
+    @Query("SELECT r FROM Reviews r WHERE r.product.id = :prdId")
+    List<Reviews> findByPrdId(@Param("prdId") long productId);
 
-    @Query("SELECT r FROM Reviews r WHERE r.userId = :usId AND r.productId = :prdId")
+    @Query("SELECT r FROM Reviews r WHERE r.user.id = :usId AND r.product.id = :prdId")
     List<Reviews> findByUserAndProductIds(@Param("usId") long userId, @Param("prdId") long productId);
 
 }

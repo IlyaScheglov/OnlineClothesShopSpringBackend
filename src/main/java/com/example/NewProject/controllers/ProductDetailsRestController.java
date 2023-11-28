@@ -75,8 +75,8 @@ public class ProductDetailsRestController {
     public ResponseEntity addProductToTheBasket(@RequestParam String productId, @RequestParam int sizeToOrder,
                                                 @RequestParam int countToOrder, Principal principal){
 
-        long userId = usersService.findUserByPrincipal(principal).getId();
-        long categoryIdOfProduct = productsService.findProductById(Long.parseLong(productId)).getCategoryId();
+        Users user = usersService.findUserByPrincipal(principal);
+        long categoryIdOfProduct = productsService.findProductById(Long.parseLong(productId)).getCategory().getId();
 
         if(countToOrder > 0){
 
@@ -85,7 +85,7 @@ public class ProductDetailsRestController {
                 ProductsOnStock productOnStock = productOnStockService
                         .findProductToAddToTheBasket(Long.parseLong(productId), sizeToOrder);
 
-                basketService.addProductToTheBasket(userId, productOnStock.getId(), countToOrder);
+                basketService.addProductToTheBasket(user, productOnStock, countToOrder);
                 return ResponseEntity.ok("Товар успешно добавлен в корзину!");
 
             }
@@ -103,16 +103,16 @@ public class ProductDetailsRestController {
     @PostMapping("/like-or-dislike-product")
     public ResponseEntity likeOrDislikeProduct(@RequestParam String productId, Principal principal){
 
-        long userId = usersService.findUserByPrincipal(principal).getId();
+        Users user = usersService.findUserByPrincipal(principal);
 
-        if (likesService.checkLikedByUser(userId, Long.parseLong(productId)).size() == 0){
+        if (likesService.checkLikedByUser(user.getId(), Long.parseLong(productId)).size() == 0){
 
-            likesService.addLike(userId, Long.parseLong(productId));
+            likesService.addLike(user, productsService.findProductById(Long.parseLong(productId)));
             return ResponseEntity.ok("Вы добавили товар в любимое!");
         }
         else{
 
-            likesService.deleteLike(userId, Long.parseLong(productId));
+            likesService.deleteLike(user.getId(), Long.parseLong(productId));
             return ResponseEntity.ok("Вы убрали товар из любимого!");
 
         }
@@ -123,7 +123,7 @@ public class ProductDetailsRestController {
     public ResponseEntity addReview(@RequestParam int stars, @RequestParam String comment,
                                     @RequestParam String productId, Principal principal){
 
-        long userId = usersService.findUserByPrincipal(principal).getId();
+        Users user = usersService.findUserByPrincipal(principal);
 
         if(stars == 0){
 
@@ -131,7 +131,7 @@ public class ProductDetailsRestController {
         }
         else{
 
-            reviewsService.addNewReview(userId, Long.parseLong(productId), stars, comment);
+            reviewsService.addNewReview(user, productsService.findProductById(Long.parseLong(productId)), stars, comment);
             return ResponseEntity.ok("success");
         }
     }

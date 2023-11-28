@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,9 +29,6 @@ public class Users implements Serializable{
     @Column(name = "nickname")
     private String nickname;
 
-    @Column(name = "telegram_login")
-    private String telegramLogin;
-
     @Column(name = "active")
     private boolean active;
 
@@ -40,5 +39,17 @@ public class Users implements Serializable{
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Reviews> reviews = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Basket> baskets = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Orders> orders = new ArrayList<>();
 
 }

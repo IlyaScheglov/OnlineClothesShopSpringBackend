@@ -17,12 +17,14 @@ public class Basket implements Serializable{
     @Column(name = "id")
     private long id;
 
-    @Column(name = "user_id")
-    private long userId;
-
-    @Column(name = "product_on_stock_id")
-    private long productOnStockId;
-
     @Column(name = "count")
     private int count;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_on_stock_id")
+    private ProductsOnStock productsOnStock;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private Users user;
 }

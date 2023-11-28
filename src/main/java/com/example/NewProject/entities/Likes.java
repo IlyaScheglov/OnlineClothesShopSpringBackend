@@ -17,9 +17,11 @@ public class Likes implements Serializable{
     @Column(name = "id")
     private long id;
 
-    @Column(name = "user_id")
-    private long userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
+    private Products product;
 
-    @Column(name = "product_id")
-    private long productId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private Users user;
 }

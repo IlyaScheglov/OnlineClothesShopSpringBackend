@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,17 +28,31 @@ public class Products implements Serializable, Comparable<Products>{
     @Column(name = "big_description")
     private String bigDescription;
 
-    @Column(name = "color_id")
-    private long colorId;
-
     @Column(name = "cost")
     private String cost;
-
-    @Column(name = "category_id")
-    private long categoryId;
 
     @Override
     public int compareTo(Products o) {
         return 0;
     }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Categories category;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "color_id")
+    private Colors color;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    private List<ProductsOnStock> productsOnStock = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    private List<Images> images = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    private List<Reviews> reviews = new ArrayList<>();
 }

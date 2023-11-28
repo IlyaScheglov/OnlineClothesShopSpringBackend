@@ -11,9 +11,9 @@ public class StatusesService {
 
     private final StatusesRepo statusesRepo;
 
-    public String getStatusById(long statusId){
+    public Statuses getStatusById(long statusId){
 
         Statuses status = statusesRepo.findByStatusId(statusId);
-        return status.getTitle();
+        return status;
     }
 }

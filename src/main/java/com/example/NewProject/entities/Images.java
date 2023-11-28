@@ -17,9 +17,10 @@ public class Images implements Serializable{
     @Column(name = "id")
     private long id;
 
-    @Column(name = "product_id")
-    private long productId;
-
     @Column(name = "way_to_file")
     private String wayToFile;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
+    private Products product;
 }

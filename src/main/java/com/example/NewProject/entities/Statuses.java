@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,4 +21,7 @@ public class Statuses implements Serializable{
 
     @Column(name = "title")
     private String title;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "status")
+    private List<Orders> orders = new ArrayList<>();
 }

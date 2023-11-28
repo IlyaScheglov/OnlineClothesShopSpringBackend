@@ -1,6 +1,8 @@
 package com.example.NewProject.services;
 
+import com.example.NewProject.entities.Orders;
 import com.example.NewProject.entities.ProductsInOrder;
+import com.example.NewProject.entities.ProductsOnStock;
 import com.example.NewProject.repos.ProductsInOrderRepo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ public class ProductInOrderService {
 
         List<ProductsInOrder> productsInOrders = productsInOrderRepo.findAll();
 
-        productsInOrders.forEach(pio -> result.add(pio.getProductOnStockId()));
+        productsInOrders.forEach(pio -> result.add(pio.getProductsOnStock().getId()));
 
         return result;
     }
@@ -35,38 +37,38 @@ public class ProductInOrderService {
         List<ProductsInOrder> productsInOrders = new ArrayList<>();
         orderIds.forEach(oi -> {
 
-            List<ProductsInOrder> prdInOrder = productsInOrderRepo.findByOrderId(oi);
+            List<ProductsInOrder> prdInOrder = productsInOrderRepo.findByOrdId(oi);
             prdInOrder.forEach(prio -> productsInOrders.add(prio));
         });
 
-        List<Long> result = productsInOrders.stream().map(pio -> pio.getProductOnStockId()).collect(Collectors.toList());
+        List<Long> result = productsInOrders.stream().map(pio -> pio.getProductsOnStock().getId()).collect(Collectors.toList());
         return result;
     }
 
-    public void addProductToOrder(long orderId, long productOnStockId, int count){
+    public void addProductToOrder(Orders order, ProductsOnStock productOnStock, int count){
 
         ProductsInOrder productsInOrder = new ProductsInOrder();
-        productsInOrder.setOrderId(orderId);
-        productsInOrder.setProductOnStockId(productOnStockId);
+        productsInOrder.setOrder(order);
+        productsInOrder.setProductsOnStock(productOnStock);
         productsInOrder.setCount(count);
         productsInOrderRepo.save(productsInOrder);
     }
 
     public int getCountOfProductsInOrder(long orderId){
 
-        List<ProductsInOrder> productsInOrder = productsInOrderRepo.findByOrderId(orderId);
+        List<ProductsInOrder> productsInOrder = productsInOrderRepo.findByOrdId(orderId);
         int count = productsInOrder.stream().mapToInt(pio -> pio.getCount()).sum();
         return count;
     }
 
     public long getFirstProductOnStockId(long orderId){
 
-        return productsInOrderRepo.findByOrderId(orderId).get(0).getProductOnStockId();
+        return productsInOrderRepo.findByOrdId(orderId).get(0).getProductsOnStock().getId();
     }
 
     public List<Object> findProductsInOrderToAdminByOrderId(long orderId){
 
-        List<ProductsInOrder> productsInOrder = productsInOrderRepo.findByOrderId(orderId);
+        List<ProductsInOrder> productsInOrder = productsInOrderRepo.findByOrdId(orderId);
         return convertToShowFormat(productsInOrder);
     }
 
@@ -91,10 +93,12 @@ public class ProductInOrderService {
             PrdInOrdShowFormat prd = new PrdInOrdShowFormat();
             prd.setId(pio.getId());
             prd.setCount(pio.getCount());
-            prd.setSize(productOnStockService.findProductOnStockById(pio.getProductOnStockId()).getSize());
-            prd.setProductId(productOnStockService.findProductIdByStockId(pio.getProductOnStockId()));
+            prd.setSize(pio.getProductsOnStock().getSize());
+            prd.setProductId(productOnStockService.findProductIdByStockId(pio.getProductsOnStock().getId()));
             prdInOrdShowFormat.add(prd);
         });
         return prdInOrdShowFormat;
     }
+
+
 }

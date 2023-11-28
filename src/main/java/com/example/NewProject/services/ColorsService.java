@@ -17,4 +17,8 @@ public class ColorsService {
 
         return colorsRepo.findAll();
     }
+
+    public Colors findColorById(long colorId){
+        return colorsRepo.findByColorId(colorId);
+    }
 }

@@ -76,8 +76,8 @@ public class AdminOrdersPageRestController {
     public void sendMessagesChangedStatus(@RequestParam int orderId){
 
         Orders order = ordersService.findOrderById((long)orderId);
-        Users user = usersService.findUserById(order.getUserId());
-        sendingEmails.sendMailToUser(user, order, (int)order.getStatusId());
+        Users user = usersService.findUserById(order.getUser().getId());
+        sendingEmails.sendMailToUser(user, order, (int)order.getStatus().getId());
     }
 
 

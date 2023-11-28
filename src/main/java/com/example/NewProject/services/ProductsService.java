@@ -25,6 +25,11 @@ public class ProductsService {
 
     private final ProductInOrderService productInOrderService;
 
+    private final CategoriesService categoriesService;
+
+    private final ColorsService colorsService;
+
+
     public Products findProductById(long productId){
 
         return productsRepo.findByProductId(productId);
@@ -55,7 +60,6 @@ public class ProductsService {
         private long id;
 
         private int countSells;
-
     }
 
     public List<Products> findBestSellers(){
@@ -146,8 +150,8 @@ public class ProductsService {
         newProductForm.setCost(products.getCost());
         newProductForm.setSmallDescription(products.getSmallDescription());
         newProductForm.setBigDescription(products.getBigDescription());
-        newProductForm.setColorId(products.getColorId());
-        newProductForm.setCategoryId(products.getCategoryId());
+        newProductForm.setColorId(products.getColor().getId());
+        newProductForm.setCategoryId(products.getCategory().getId());
         newProductForm.setSizes(productOnStockService.findSizesOfProduct(products.getId()));
         newProductForm.setCountReviews(reviewsService.getCountOfReviewsOnProduct(products.getId()));
         newProductForm.setStars(reviewsService.getListOfMiddleStarsOnProduct(products.getId()));
@@ -170,8 +174,8 @@ public class ProductsService {
         List<Products> filteredProducts = products.stream()
                 .filter(p -> (int)Double.parseDouble(p.getCost()) > minCostValue)
                 .filter(p -> (int)Double.parseDouble(p.getCost()) < maxCostFilter)
-                .filter(p -> colorFilter > 0 ? p.getColorId() == (long)colorFilter : p.getColorId() > 0L)
-                .filter(p -> categoryFilter > 0 ? p.getCategoryId() == (long)categoryFilter : p.getCategoryId() > 0L)
+                .filter(p -> colorFilter > 0 ? p.getColor().getId() == (long)colorFilter : p.getColor().getId() > 0L)
+                .filter(p -> categoryFilter > 0 ? p.getCategory().getId() == (long)categoryFilter : p.getCategory().getId() > 0L)
                 .filter(p -> p.getTitle().toLowerCase().contains(searchFilter.toLowerCase()))
                 .filter(p -> sizeFilter > 0 ? productIdsListForSizeFilter.contains(p.getId()) : p.getId() > 0L)
                 .collect(Collectors.toList());
@@ -314,7 +318,7 @@ public class ProductsService {
 
     }
 
-    public Long addNewProduct(String title, String smallDesc, String bigDesc,
+    public Products addNewProduct(String title, String smallDesc, String bigDesc,
                               String cost, long categoryId, long colorId){
 
         Products product = new Products();
@@ -322,10 +326,10 @@ public class ProductsService {
         product.setSmallDescription(smallDesc);
         product.setBigDescription(bigDesc);
         product.setCost(cost + ".00");
-        product.setCategoryId(categoryId);
-        product.setColorId(colorId);
+        product.setCategory(categoriesService.findCategoryById(categoryId));
+        product.setColor(colorsService.findColorById(colorId));
         productsRepo.save(product);
-        return product.getId();
+        return product;
     }
 
 

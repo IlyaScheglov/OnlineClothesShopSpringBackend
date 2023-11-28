@@ -17,15 +17,17 @@ public class Reviews implements Serializable{
     @Column(name = "id")
     private long id;
 
-    @Column(name = "product_id")
-    private long productId;
-
-    @Column(name = "user_id")
-    private long userId;
-
     @Column(name = "stars")
     private int stars;
 
     @Column(name = "review_text")
     private String reviewText;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
+    private Products product;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private Users user;
 }

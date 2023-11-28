@@ -19,8 +19,8 @@ public class SendingEmails {
 
     private final StatusesService statusesService;
 
-    private final String password = "XXX";
-    private final String from = "XXX";
+    private final String password = "gyyswjyyokekkphb";
+    private final String from = "shomashop677@gmail.com";
     private final String host = "smtp.gmail.com";
     private final String smtpPort = "465";
     public void sendMailToUser(Users user, Orders order, int type){
@@ -71,7 +71,7 @@ public class SendingEmails {
             builder.append("Номер заказа: " + order.getId() + ".\n");
             builder.append("Сумма заказа: " + String.valueOf(order.getCost()) + "₽.\n");
             builder.append("Указанный адрес: " + order.getAddress() + ".\n");
-            builder.append("Статус заказа: " + statusesService.getStatusById(order.getStatusId()) + ".\n\n");
+            builder.append("Статус заказа: " + statusesService.getStatusById(order.getStatus().getId()) + ".\n\n");
             builder.append("Если у вас остались вопросы, пишите нашему администратору в telegram: @Gendefo!");
         }
         else if (type == 2){
@@ -79,7 +79,7 @@ public class SendingEmails {
             builder.append("Номер заказа: " + order.getId() + ".\n");
             builder.append("Сумма заказа: " + String.valueOf(order.getCost()) + "₽.\n");
             builder.append("Адрес отделения СДЭК, куда прийдет заказ: " + order.getFinalAddress() + ".\n");
-            builder.append("Статус заказа: " + statusesService.getStatusById(order.getStatusId()) + ".\n\n");
+            builder.append("Статус заказа: " + statusesService.getStatusById(order.getStatus().getId()) + ".\n\n");
             builder.append("Если у вас остались вопросы, пишите нашему администратору в telegram: @Gendefo!");
         }
         else if (type == 3){
@@ -87,7 +87,7 @@ public class SendingEmails {
             builder.append("Номер заказа: " + order.getId() + ".\n");
             builder.append("Сумма заказа: " + String.valueOf(order.getCost()) + "₽.\n");
             builder.append("Адрес отделения СДЭК: " + order.getFinalAddress() + ".\n");
-            builder.append("Статус заказа: " + statusesService.getStatusById(order.getStatusId()) + ".\n\n");
+            builder.append("Статус заказа: " + statusesService.getStatusById(order.getStatus().getId()) + ".\n\n");
             builder.append("Если у вас остались вопросы, пишите нашему администратору в telegram: @Gendefo!");
         }
 

@@ -1,5 +1,6 @@
 package com.example.NewProject.services;
 
+import com.example.NewProject.entities.Products;
 import com.example.NewProject.entities.ProductsInOrder;
 import com.example.NewProject.entities.ProductsOnStock;
 import com.example.NewProject.repos.ProductsOnStockRepo;
@@ -22,7 +23,7 @@ public class ProductOnStockService {
         List<ProductsOnStock> productsOnStock = productsOnStockRepo.findAll();
         List<Long> allProductsIds = productsOnStock.stream()
                 .filter(pos -> pos.getCount() > 0)
-                .map(pos -> pos.getProductId())
+                .map(pos -> pos.getProduct().getId())
                 .distinct()
                 .collect(Collectors.toList());
         return allProductsIds;
@@ -34,7 +35,7 @@ public class ProductOnStockService {
         List<Long> result = new ArrayList<>();
 
         productsOnStockIds.forEach(posi -> result.add(productsOnStockRepo.findByProductOnStockId(posi)
-                .getProductId()));
+                .getProduct().getId()));
 
         return result;
 
@@ -49,7 +50,7 @@ public class ProductOnStockService {
 
     public List<Integer> findSizesOfProduct(long productId){
 
-        List<ProductsOnStock> productsOnStockWithThisId = productsOnStockRepo.findByProductId(productId);
+        List<ProductsOnStock> productsOnStockWithThisId = productsOnStockRepo.findByPrdId(productId);
 
         List<Integer> listOfSizes = productsOnStockWithThisId.stream().map(poswti -> poswti.getSize())
                 .collect(Collectors.toList());
@@ -73,7 +74,7 @@ public class ProductOnStockService {
             prdOnStock.forEach(prio -> productsOnStocks.add(prio));
         });
 
-        List<Long> result = productsOnStocks.stream().map(pio -> pio.getProductId()).collect(Collectors.toList());
+        List<Long> result = productsOnStocks.stream().map(pio -> pio.getProduct().getId()).collect(Collectors.toList());
         return result;
     }
 
@@ -100,13 +101,13 @@ public class ProductOnStockService {
 
     public long findProductIdByStockId(long productOnStockId){
 
-        return productsOnStockRepo.findByProductOnStockId(productOnStockId).getProductId();
+        return productsOnStockRepo.findByProductOnStockId(productOnStockId).getProduct().getId();
     }
 
-    public void addProductToStock(long productId, int size){
+    public void addProductToStock(Products product, int size){
 
             ProductsOnStock productsOnStock = new ProductsOnStock();
-            productsOnStock.setProductId(productId);
+            productsOnStock.setProduct(product);
             productsOnStock.setCount(0);
             productsOnStock.setSize(size);
             productsOnStockRepo.save(productsOnStock);
